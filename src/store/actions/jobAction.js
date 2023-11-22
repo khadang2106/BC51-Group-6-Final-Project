@@ -1,6 +1,7 @@
 
 import { jobService } from "../../services/job";
-import { DELETE_JOB, UPDATE_JOB } from "../types/userType";
+import { DELETE_JOB, UPDATE_JOB } from "../types/jobType";
+
 
 // nhấn nút delete job
 export const deleteJobAction = (job) => async (dispatch) => {

@@ -7,7 +7,6 @@ import { UserType } from '../enums/api';
 export default function AdminGuard(props) {
     const navigate = useNavigate();
     const userState = useSelector((state)=>state.userReducer);
-    console.log(userState);
     useEffect(()=>{
         //người dùng chưa đăng nhập
         if(!userState.userInfo){
@@ -20,7 +19,7 @@ export default function AdminGuard(props) {
         //người dùng đăng nhập nhưng không đúng loại người dùng là quản trị 
         if(userState.userInfo.user.role !== UserType.ADMIN){
             notification.warning({
-                message:"Bạn không có quyền truy cập vào trang này!!!",
+                message:"Bạn không có quyền truy cập vào trang này!",
                 placement:"top",
             });
             navigate("/");

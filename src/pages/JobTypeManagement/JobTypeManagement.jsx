@@ -85,7 +85,6 @@ export default function UserManagement() {
     resetFormUpdateJobType();
     try {
       const getJobTypeDetail = await jobTypeService.getJobTypeDetailApi(id);
-      console.log(getJobTypeDetail);
       if (getJobTypeDetail.data.statusCode === 200) {
         setStateJobType(getJobTypeDetail.data.content);
       } else {
@@ -117,7 +116,6 @@ export default function UserManagement() {
     );
     if (isValid) {
       try {
-        console.log(stateJobType);
         if (
           window.confirm(
             `Bạn có chắc muốn cập nhật loại công việc ${stateJobType.tenLoaiCongViec} này không?`
@@ -147,7 +145,6 @@ export default function UserManagement() {
   //hàm rendercontent
   const renderContent = () => {
     return currentUsers.map((element, index) => {
-      console.log(element);
       return (
         <tr key={index}>
           <td>{element.id}</td>

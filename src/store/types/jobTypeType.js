@@ -1,0 +1,2 @@
+export const DELETE_JOBTYPE = 'DELETE_JOBTYPE';
+export const UPDATE_JOBTYPE = 'UPDATE_JOBTYPE';
