@@ -179,20 +179,8 @@ export default function UserManagement() {
       validationRole(
         updateUser.role,
         roleRef,
-        "Loại người dùng chỉ có 2 loại ADMIN HOẶC USER!"
+        "Loại người dùng chỉ có ADMIN HOẶC USER! (viết hoa)"
       );
-    //validation certification trong update
-    isValid &= validationRequired(
-      updateUser.certification,
-      certificationRef,
-      "Vui lòng nhập chứng nhận - Nếu không có nhập 'Không'!"
-    );
-    //validation skill trong update
-    isValid &= validationRequired(
-      updateUser.skill,
-      skillRef,
-      "Vui lòng nhập kỹ năng - Nếu không có nhập 'Không'!"
-    );
     if (isValid) {
       try {
         //chuyển certification và skill từ chuỗi sang mảng theo yc của api
@@ -404,7 +392,7 @@ export default function UserManagement() {
       return (
         <tr>
           <td colSpan="8" style={{ textAlign: "center" }}>
-            Vui lòng nhập tên người dùng vào ô tìm kiếm.
+            Không tìm thấy người dùng!
           </td>
         </tr>
       );

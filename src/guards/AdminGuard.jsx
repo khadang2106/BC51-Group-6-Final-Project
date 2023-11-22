@@ -15,7 +15,7 @@ export default function AdminGuard(props) {
                 message: "Vui lòng đăng nhập để vào trang admin",
                 placement:"top",
             })
-            navigate("/login");
+            navigate("/user/login");
         }else{
         //người dùng đăng nhập nhưng không đúng loại người dùng là quản trị 
         if(userState.userInfo.user.role !== UserType.ADMIN){

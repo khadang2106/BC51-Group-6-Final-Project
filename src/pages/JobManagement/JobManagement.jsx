@@ -58,14 +58,65 @@ export default function UserManagement() {
       "Short Discription không được để trống!"
     );
     //validation price trong add new job
-    isValid &= validationRequired(
-      addJob.giaTien,
-      priceJobRef,
-      "Price không được để trống!"
-    );
+    isValid &=
+      validationRequired(
+        addJob.giaTien,
+        priceJobRef,
+        "Price không được để trống!"
+      ) &&
+      validationNumber(
+        addJob.giaTien,
+        priceJobRef,
+        "Vui lòng nhập price bằng chữ số!"
+      );
+    //validation rate trong add new job
+    isValid &=
+      validationRequired(
+        addJob.danhGia,
+        rateJobRef,
+        "Rate không được để trống!"
+      ) &&
+      validationNumber(
+        addJob.danhGia,
+        rateJobRef,
+        "Vui lòng nhập Rate bằng chữ số!"
+      ) &&
+      validationCheckNumberRate(
+        addJob.danhGia,
+        rateJobRef,
+        "Vui lòng nhập Rate từ 0 đến 10!"
+      );
+    //validation detail code trong add new job
+    isValid &=
+      validationRequired(
+        addJob.maChiTietLoaiCongViec,
+        detailCodeJobRef,
+        "Detail code không được để trống!"
+      ) &&
+      validationNumber(
+        addJob.maChiTietLoaiCongViec,
+        detailCodeJobRef,
+        "Vui lòng nhập detail code bằng chữ số!"
+      );
+    //validation star ratting
+    isValid &=
+      validationRequired(
+        addJob.saoCongViec,
+        starRattingJobRef,
+        "Star Ratting không được để trống!"
+      ) &&
+      validationNumber(
+        addJob.saoCongViec,
+        starRattingJobRef,
+        "Vui lòng nhập star ratting bằng chữ số!"
+      ) &&
+      validationCheckNumberStarRatting(
+        addJob.saoCongViec,
+        starRattingJobRef,
+        "Vui lòng nhập star ratting từ 1 đến 5!"
+      );
     if (isValid) {
       const dataAddNewJob = { ...addJob };
-      console.log(dataAddNewJob);
       try {
         if (
           window.confirm(
@@ -73,9 +124,9 @@ export default function UserManagement() {
           )
         ) {
           const response = await jobService.addNewJobApi(dataAddNewJob);
-          if (response && response.data.statusCode === 200) {
+          if (response && response.data.statusCode === 201) {
             alert("Thêm công việc thành công!");
-            document.getElementById("close1").click();
+            document.getElementById("closeAddJob").click();
           }
         }
       } catch (error) {
@@ -84,7 +135,7 @@ export default function UserManagement() {
       }
     }
   };
-  //hàm reset data form và reset error add new hob
+  //hàm reset data form và reset error add new job
   const resetModalState = () => {
     setAddJob({
       tenCongViec: "",
@@ -106,8 +157,35 @@ export default function UserManagement() {
     discriptionJobRef.current.innerHTML = "";
     shortDiscriptionJobRef.current.innerHTML = "";
     priceJobRef.current.innerHTML = "";
+    rateJobRef.current.innerHTML = "";
+    detailCodeJobRef.current.innerHTML = "";
+    starRattingJobRef.current.innerHTML = "";
   };
-  
+  const resetFormUpdateJob = () => {
+    setUpdateJob({
+      tenCongViec: "",
+      moTa: "",
+      moTaNgan: "",
+      giaTien: "",
+      danhGia: "",
+      maChiTietLoaiCongViec: "",
+      saoCongViec: "",
+    });
+    document.getElementById("updateNameJobInput").value = "";
+    document.getElementById("updateDiscriptionJobInput").value = "";
+    document.getElementById("updateShortDiscriptionJobInput").value = "";
+    document.getElementById("updatePriceJobInput").value = "";
+    document.getElementById("updateRateJobInput").value = "";
+    document.getElementById("updateDetailCodeJobInput").value = "";
+    document.getElementById("updateStarRattingJobInput").value = "";
+    updateNameRef.current.innerHTML = "";
+    updateDiscriptionRef.current.innerHTML = "";
+    updateShortDiscriptionRef.current.innerHTML = "";
+    updatePriceRef.current.innerHTML = "";
+    updateRateRef.current.innerHTML = "";
+    updateDetailCodeRef.current.innerHTML = "";
+    updateStarRattingRef.current.innerHTML = "";
+  }
   //khai báo để validation
   const nameJobRef = useRef(null);
   const discriptionJobRef = useRef(null);
@@ -132,9 +210,36 @@ export default function UserManagement() {
     ref.current.innerHTML = message;
     return false;
   };
+  //hàm check validation number
+  const validationNumber = (value, ref, message) => {
+    if (/^[0-9]+$/.test(value)) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
+  const validationCheckNumberRate = (value, ref, message) => {
+    const rateValue = parseFloat(value);
+    if (!isNaN(rateValue) && rateValue >= 0 && rateValue <= 10) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
+  const validationCheckNumberStarRatting = (value, ref, message) => {
+    const rateValue = parseFloat(value);
+    if (!isNaN(rateValue) && rateValue >= 1 && rateValue <= 5) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
   //hàm này khi click vào Edit lấy thông tin chi tiết Job show form
   const handleEditClick = async (id) => {
-    console.log(id);
+    resetFormUpdateJob();
     try {
       const getJobDetail = await jobService.getJobDetailApi(id);
       console.log(getJobDetail);
@@ -159,30 +264,76 @@ export default function UserManagement() {
     console.log(updateJob);
     event.preventDefault();
     let isValid = true;
-    //validation nameJob trong add new job
+    //validation nameJob trong update job
     isValid &= validationRequired(
       updateJob.tenCongViec,
       updateNameRef,
       "Name Job không được để trống!"
     );
-    //validation discriptionJob trong add new job
+    //validation discriptionJob trong update job
     isValid &= validationRequired(
       updateJob.moTa,
       updateDiscriptionRef,
       "Discription không được để trống!"
     );
-    //validation shortDiscriptionJob trong add new job
+    //validation shortDiscriptionJob trong update job
     isValid &= validationRequired(
       updateJob.moTaNgan,
       updateShortDiscriptionRef,
       "Short Discription không được để trống!"
     );
-    //validation price trong add new job
-    isValid &= validationRequired(
-      updateJob.giaTien,
-      updatePriceRef,
-      "Price không được để trống!"
-    );
+    //validation price trong update job
+    isValid &=
+      validationRequired(
+        updateJob.giaTien,
+        updatePriceRef,
+        "Price không được để trống!"
+      ) &&
+      validationNumber(
+        updateJob.giaTien,
+        updatePriceRef,
+        "Vui lòng nhập price bằng chữ số!"
+      );
+    //validation rate trong update job
+    isValid &=
+      validationRequired(
+        updateJob.danhGia,
+        updateRateRef,
+        "Rate không được để trống!"
+      ) &&
+      validationNumber(
+        updateJob.danhGia,
+        updateRateRef,
+        "Vui lòng nhập Rate bằng chữ số!"
+      ) && validationCheckNumberRate(updateJob.danhGia,
+        updateRateRef,
+        "Vui lòng nhập Rate từ 0 đến 10!");
+    //validation detail code trong update job
+    isValid &=
+      validationRequired(
+        updateJob.maChiTietLoaiCongViec,
+        updateDetailCodeRef,
+        "Detail code không được để trống!"
+      ) &&
+      validationNumber(
+        updateJob.maChiTietLoaiCongViec,
+        updateDetailCodeRef,
+        "Vui lòng nhập detail code bằng chữ số!"
+      );
+    //validation star ratting trong update job
+    isValid &=
+      validationRequired(
+        updateJob.saoCongViec,
+        updateStarRattingRef,
+        "Star Ratting không được để trống!"
+      ) &&
+      validationNumber(
+        updateJob.saoCongViec,
+        updateStarRattingRef,
+        "Vui lòng nhập star ratting bằng chữ số!"
+      ) && validationCheckNumberStarRatting(updateJob.saoCongViec,
+        updateStarRattingRef,
+        "Vui lòng nhập star ratting từ 1 đến 5!");
     if (isValid) {
       try {
         if (
@@ -191,9 +342,9 @@ export default function UserManagement() {
           )
         ) {
           const response = await jobService.addNewJobApi(updateJob);
-          if (response && response.data.statusCode === 200) {
+          if (response && response.data.statusCode === 201) {
             alert("Thêm công việc thành công!");
-            document.getElementById("close1").click();
+            document.getElementById("closeUpdateJob").click();
           }
         }
       } catch (error) {
@@ -204,7 +355,7 @@ export default function UserManagement() {
   };
   //hàm upload hình ảnh
   const [selectedImage, setSelectedImage] = useState(null);
-  const handleFileChange  = (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
   };
@@ -218,7 +369,10 @@ export default function UserManagement() {
         console.log(selectedImage);
         formData.append("hinhAnh", selectedImage);
         console.log(formData.get("hinhAnh"));
-        const response = await jobService.uploadImageApi(currentJobId, formData);
+        const response = await jobService.uploadImageApi(
+          currentJobId,
+          formData
+        );
         if (response && response.data.statusCode === 200) {
           // Handle the successful image upload
           alert("Image uploaded successfully!");
@@ -378,49 +532,45 @@ export default function UserManagement() {
             </table>
             {/**hiển thị next previous trong ul này */}
             <ul className="pagination">
-                <li
-                  className={
-                    currentPage === 1 ? "page-item disabled" : "page-item"
+              <li
+                className={
+                  currentPage === 1 ? "page-item disabled" : "page-item"
+                }
+                onClick={() => {
+                  if (currentPage !== 1) {
+                    handlePageChange(currentPage - 1);
                   }
-                  onClick={() => {
-                    if (currentPage !== 1) {
-                      handlePageChange(currentPage - 1);
-                    }
-                  }}
-                >
-                  <span className="page-link">Previous</span>
-                </li>
-                {pageNumbers.map((number) => (
-                  <li
-                    key={number}
-                    className={
-                      currentPage === number ? "page-item active" : "page-item"
-                    }
-                    onClick={() => handlePageChange(number)}
-                  >
-                    <span className="page-link">{number}</span>
-                  </li>
-                ))}
+                }}
+              >
+                <span className="page-link">Previous</span>
+              </li>
+              {pageNumbers.map((number) => (
                 <li
+                  key={number}
                   className={
-                    currentPage ===
-                      Math.ceil(jobList.length / jobsPerPage) ||
-                    jobList.length <= jobsPerPage
-                      ? "page-item disabled"
-                      : "page-item"
+                    currentPage === number ? "page-item active" : "page-item"
                   }
-                  onClick={() => {
-                    if (
-                      currentPage !==
-                      Math.ceil(jobList.length / jobsPerPage)
-                    ) {
-                      handlePageChange(currentPage + 1);
-                    }
-                  }}
+                  onClick={() => handlePageChange(number)}
                 >
-                  <span className="page-link">Next</span>
+                  <span className="page-link">{number}</span>
                 </li>
-              </ul>
+              ))}
+              <li
+                className={
+                  currentPage === Math.ceil(jobList.length / jobsPerPage) ||
+                  jobList.length <= jobsPerPage
+                    ? "page-item disabled"
+                    : "page-item"
+                }
+                onClick={() => {
+                  if (currentPage !== Math.ceil(jobList.length / jobsPerPage)) {
+                    handlePageChange(currentPage + 1);
+                  }
+                }}
+              >
+                <span className="page-link">Next</span>
+              </li>
+            </ul>
           </div>
           <br />
         </div>
@@ -518,6 +668,7 @@ export default function UserManagement() {
                     name="maChiTietLoaiCongViec"
                     className="form-control"
                     id="detailCodeJobInput"
+                    placeholder="number"
                   />
                   <span ref={detailCodeJobRef} className="text-danger"></span>
                 </div>
@@ -559,7 +710,7 @@ export default function UserManagement() {
                 type="button"
                 className="close"
                 data-dismiss="modal"
-                id="close"
+                id="closeUpdateJob"
               >
                 ×
               </button>
@@ -575,6 +726,7 @@ export default function UserManagement() {
                     value={updateJob.tenCongViec}
                     name="tenCongViec"
                     className="form-control"
+                    id="updateNameJobInput"
                   />
                   <span ref={updateNameRef} className="text-danger"></span>
                 </div>
@@ -586,6 +738,7 @@ export default function UserManagement() {
                     value={updateJob.moTa}
                     name="moTa"
                     className="form-control"
+                    id="updateDiscriptionJobInput"
                   />
                   <span
                     ref={updateDiscriptionRef}
@@ -602,6 +755,7 @@ export default function UserManagement() {
                     value={updateJob.moTaNgan}
                     name="moTaNgan"
                     className="form-control"
+                    id="updateShortDiscriptionJobInput"
                   />
                   <span
                     ref={updateShortDiscriptionRef}
@@ -617,6 +771,7 @@ export default function UserManagement() {
                     name="giaTien"
                     className="form-control"
                     placeholder="number"
+                    id="updatePriceJobInput"
                   />
                   <span ref={updatePriceRef} className="text-danger"></span>
                 </div>
@@ -629,6 +784,7 @@ export default function UserManagement() {
                     name="danhGia"
                     className="form-control"
                     placeholder="number"
+                    id="updateRateJobInput"
                   />
                   <span ref={updateRateRef} className="text-danger"></span>
                 </div>
@@ -640,6 +796,7 @@ export default function UserManagement() {
                     value={updateJob.maChiTietLoaiCongViec}
                     name="maChiTietLoaiCongViec"
                     className="form-control"
+                    id="updateDetailCodeJobInput"
                   />
                   <span
                     ref={updateDetailCodeRef}
@@ -655,6 +812,7 @@ export default function UserManagement() {
                     name="saoCongViec"
                     className="form-control"
                     placeholder="number 1->5"
+                    id="updateStarRattingJobInput"
                   />
                   <span
                     ref={updateStarRattingRef}
@@ -703,7 +861,9 @@ export default function UserManagement() {
                 />
               </div>
               <div className="text-right">
-                <button className="btn btn-success" onClick={handleImageUpload}>Upload</button>
+                <button className="btn btn-success" onClick={handleImageUpload}>
+                  Upload
+                </button>
               </div>
             </div>
             {/* Modal footer */}

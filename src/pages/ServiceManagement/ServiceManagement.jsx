@@ -1,7 +1,10 @@
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import useServiceList from "../../hooks/useServiceList";
-import { deleteJobServiceAction, updateJobServiceAction } from "../../store/actions/jobServiceAction";
+import {
+  deleteJobServiceAction,
+  updateJobServiceAction,
+} from "../../store/actions/jobServiceAction";
 import { serviceService } from "../../services/service";
 
 export default function UserManagement() {
@@ -25,23 +28,41 @@ export default function UserManagement() {
     event.preventDefault();
     let isValid = true;
     //validation job id trong add new service
-    isValid &= validationRequired(
-      stateJobSevice.maCongViec,
-      jobIdRef,
-      "Mã công việc không được để trống!"
-    );
+    isValid &=
+      validationRequired(
+        stateJobSevice.maCongViec,
+        jobIdRef,
+        "Mã công việc không được để trống!"
+      ) &&
+      validationNumber(
+        stateJobSevice.maCongViec,
+        jobIdRef,
+        "Vui lòng nhập mã công việc bằng chữ số!"
+      );
     //validation hirer id trong add new service
-    isValid &= validationRequired(
-      stateJobSevice.maNguoiThue,
-      hirerIdRef,
-      "Mã người thuê không được để trống!"
-    );
-    //validation job id trong add new service
-    isValid &= validationRequired(
-      stateJobSevice.ngayThue,
-      hirerDateRef,
-      "Ngày thuê không được để trống!"
-    );
+    isValid &=
+      validationRequired(
+        stateJobSevice.maNguoiThue,
+        hirerIdRef,
+        "Mã người thuê không được để trống!"
+      ) &&
+      validationNumber(
+        stateJobSevice.maNguoiThue,
+        hirerIdRef,
+        "Vui lòng nhập mã người thuê bằng chữ số!"
+      );
+    //validation hirer date trong add new service
+    isValid &=
+      validationRequired(
+        stateJobSevice.ngayThue,
+        hirerDateRef,
+        "Ngày thuê không được để trống!"
+      ) &&
+      validationDate(
+        stateJobSevice.ngayThue,
+        hirerDateRef,
+        "Vui lòng nhập ngày thuê đúng định dạng ngày/tháng/năm!"
+      );
 
     if (isValid) {
       try {
@@ -58,7 +79,7 @@ export default function UserManagement() {
           console.log(response);
           if (response.data.statusCode === 201) {
             alert("Thêm thuê công việc thành công!");
-            document.getElementById("close1").click();
+            document.getElementById("closeAddNewService").click();
           }
         }
       } catch (error) {
@@ -82,16 +103,40 @@ export default function UserManagement() {
     ref.current.innerHTML = message;
     return false;
   };
+  //validation check number
+  const validationNumber = (value, ref, message) => {
+    if (/^[0-9]+$/.test(value)) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
+  //hàm check validation ngày/tháng/năm
+  const validationDate = (value, ref, message) => {
+    const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (dateRegex.test(value)) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
   //hàm này khi click vào View và Edit lấy thông tin từ API show ra form
   const handleEditClick = async (id) => {
     // resetFormUpdateUser();
     try {
-      const getJobServiceDetail = await serviceService.getJobServiceDetailApi(id);
+      const getJobServiceDetail = await serviceService.getJobServiceDetailApi(
+        id
+      );
       console.log(getJobServiceDetail);
       if (getJobServiceDetail.data.statusCode === 200) {
         setStateJobService(getJobServiceDetail.data.content);
       } else {
-        console.error("Lỗi lấy thông tin chi tiết user:", getJobServiceDetail.data);
+        console.error(
+          "Lỗi lấy thông tin chi tiết user:",
+          getJobServiceDetail.data
+        );
       }
     } catch (error) {
       console.error("Lỗi lấy thông tin api", error);
@@ -113,19 +158,25 @@ export default function UserManagement() {
       stateJobSevice.maCongViec,
       jobIdUpdateRef,
       "Mã công việc không được để trống!"
-    );
+    ) && validationNumber(stateJobSevice.maCongViec,
+      jobIdUpdateRef,
+      "Vui lòng nhập mã công việc bằng chữ số!");
     //validation hirer id trong add new service
     isValid &= validationRequired(
       stateJobSevice.maNguoiThue,
       hirerIdUpdateRef,
       "Mã người thuê không được để trống!"
-    );
+    ) && validationNumber(stateJobSevice.maNguoiThue,
+      hirerIdUpdateRef,
+      "Vui lòng nhập mã người thuê bằng chữ số!");
     //validation job id trong add new service
     isValid &= validationRequired(
       stateJobSevice.ngayThue,
       hirerDateUpdateRef,
       "Ngày thuê không được để trống!"
-    );
+    ) && validationDate(stateJobSevice.ngayThue,
+      hirerDateUpdateRef,
+      "Vui lòng nhập ngày thuê đúng định dạng ngày/tháng/năm!");
 
     if (isValid) {
       try {
@@ -157,6 +208,21 @@ export default function UserManagement() {
     pageNumbers.push(i);
   }
   const currentUsers = serviceList.slice(indexOfFirstUser, indexOfLastUser);
+  //reset form add job type
+  const resetModalState = () => {
+    setStateJobService({
+      id: "",
+      maCongViec: "",
+      maNguoiThue: "",
+      ngayThue: "",
+    });
+    document.getElementById("jobIdServiceInput").value = "";
+    document.getElementById("hirerIdServiceInput").value = "";
+    document.getElementById("hirerDateServiceInput").value = "";
+    jobIdRef.current.innerHTML = "";
+    hirerIdRef.current.innerHTML = "";
+    hirerDateRef.current.innerHTML = "";
+  };
   //hàm rendercontent
   const renderContent = () => {
     return currentUsers.map((element, index) => {
@@ -248,6 +314,7 @@ export default function UserManagement() {
                 className="btn btn-success mr-auto"
                 data-toggle="modal"
                 data-target="#myModal"
+                onClick={resetModalState}
               >
                 <i className="fa fa-plus mr-1" /> ADD NEW SERVICE
               </button>
@@ -335,7 +402,7 @@ export default function UserManagement() {
                 type="button"
                 className="close"
                 data-dismiss="modal"
-                id="close1"
+                id="closeAddNewService"
               >
                 ×
               </button>
@@ -361,6 +428,7 @@ export default function UserManagement() {
                     onChange={handleChange}
                     name="maCongViec"
                     className="form-control"
+                    id="jobIdServiceInput"
                   />
                   <span ref={jobIdRef} className="text-danger"></span>
                 </div>
@@ -371,16 +439,18 @@ export default function UserManagement() {
                     onChange={handleChange}
                     name="maNguoiThue"
                     className="form-control"
+                    id="hirerIdServiceInput"
                   />
                   <span ref={hirerIdRef} className="text-danger"></span>
                 </div>
-                {/* Hire Date */}
+                {/* Hirer Date */}
                 <div className="form-group">
                   <label className="font-weight-bold">Hire Date</label>
                   <input
                     onChange={handleChange}
                     name="ngayThue"
                     className="form-control"
+                    id="hirerDateServiceInput"
                   />
                   <span ref={hirerDateRef} className="text-danger"></span>
                 </div>
@@ -391,7 +461,7 @@ export default function UserManagement() {
                     <input
                       type="radio"
                       id="complete"
-                      name="ngayThue"
+                      name="condition"
                       className="form-check-input"
                       value="complete"
                       //onchange này là để khi chọn tick thì lấy giá trị true false
@@ -410,7 +480,7 @@ export default function UserManagement() {
                     <input
                       type="radio"
                       id="incomplete"
-                      name="ngayThue"
+                      name="condition"
                       className="form-check-input"
                       value="incomplete"
                       checked={stateJobSevice.hoanThanh === false}
@@ -451,7 +521,7 @@ export default function UserManagement() {
                 type="button"
                 className="close"
                 data-dismiss="modal"
-                id="close2"
+                id="closeUpdateJobService"
               >
                 ×
               </button>
@@ -462,24 +532,44 @@ export default function UserManagement() {
                 {/* ID */}
                 <div className="form-group ">
                   <label className="font-weight-bold">ID</label>
-                  <input name="id" className="form-control" value={stateJobSevice.id} disabled="true" />
+                  <input
+                    name="id"
+                    className="form-control"
+                    value={stateJobSevice.id}
+                    disabled="true"
+                  />
                 </div>
                 {/* Job ID */}
                 <div className="form-group">
                   <label className="font-weight-bold">Job ID</label>
-                  <input name="maCongViec" className="form-control" value={stateJobSevice.maCongViec} onChange={handleChangeUpdateJobService}/>
+                  <input
+                    name="maCongViec"
+                    className="form-control"
+                    value={stateJobSevice.maCongViec}
+                    onChange={handleChangeUpdateJobService}
+                  />
                   <span ref={jobIdUpdateRef} className="text-danger"></span>
                 </div>
                 {/* Hirer ID */}
                 <div className="form-group">
                   <label className="font-weight-bold">Hirer ID</label>
-                  <input name="maNguoiThue" className="form-control" value={stateJobSevice.maNguoiThue} onChange={handleChangeUpdateJobService} />
+                  <input
+                    name="maNguoiThue"
+                    className="form-control"
+                    value={stateJobSevice.maNguoiThue}
+                    onChange={handleChangeUpdateJobService}
+                  />
                   <span ref={hirerIdUpdateRef} className="text-danger"></span>
                 </div>
                 {/* Hire Date */}
                 <div className="form-group">
                   <label className="font-weight-bold">Hire Date</label>
-                  <input name="ngayThue" className="form-control" value={stateJobSevice.ngayThue} onChange={handleChangeUpdateJobService} />
+                  <input
+                    name="ngayThue"
+                    className="form-control"
+                    value={stateJobSevice.ngayThue}
+                    onChange={handleChangeUpdateJobService}
+                  />
                   <span ref={hirerDateUpdateRef} className="text-danger"></span>
                 </div>
                 {/* Condition */}
@@ -489,7 +579,7 @@ export default function UserManagement() {
                     <input
                       type="radio"
                       id="complete"
-                      name="condition"
+                      name="condition2"
                       className="form-check-input"
                       value="complete"
                       //còn cái checked này là để lấy thông tin từ state show ra form lại
@@ -497,10 +587,9 @@ export default function UserManagement() {
                       onChange={() =>
                         setStateJobService({
                           ...stateJobSevice,
-                          hoanThanh: false,
+                          hoanThanh: true,
                         })
                       }
-
                     />
                     <label htmlFor="complete" className="form-check-label">
                       Complete
@@ -510,7 +599,7 @@ export default function UserManagement() {
                     <input
                       type="radio"
                       id="incomplete"
-                      name="condition"
+                      name="condition2"
                       className="form-check-input"
                       value="incomplete"
                       checked={stateJobSevice.hoanThanh === false}

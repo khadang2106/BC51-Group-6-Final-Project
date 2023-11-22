@@ -32,7 +32,7 @@ export const updateJobServiceAction = (jobServiceData) => async (dispatch) => {
           payload: jobServiceData,
         });
         alert("Cập nhật thuê công việc thành công!");
-        document.getElementById("close2").click();
+        document.getElementById("closeUpdateJobService").click();
       } else {
         console.error("Lỗi cập nhật thuê công việc:", response.data);
       }
