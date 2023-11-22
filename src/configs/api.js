@@ -11,10 +11,11 @@ const request = axios.create({
 request.interceptors.request.use((config) => {
   let accessToken = null;
   const state = store.getState();
-
+  console.log(state);
   if (state.userReducer.userInfo) {
-    accessToken = state.userReducer.userInfo.accessToken;
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    accessToken = state.userReducer.userInfo.token;
+    console.log(accessToken);
+    config.headers.Token  = accessToken;
   }
   return config;
 });
