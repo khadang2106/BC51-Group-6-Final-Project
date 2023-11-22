@@ -1,8 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import useJobList from "../../hooks/useJobList";
-import { deleteJobAction } from "../../store/actions/jobAction";
+import {
+  deleteJobAction,
+  updateJobAction,
+} from "../../store/actions/jobAction";
 import { jobService } from "../../services/job";
+import { notification } from "antd";
 
 export default function UserManagement() {
   const jobList = useJobList();
@@ -185,7 +189,7 @@ export default function UserManagement() {
     updateRateRef.current.innerHTML = "";
     updateDetailCodeRef.current.innerHTML = "";
     updateStarRattingRef.current.innerHTML = "";
-  }
+  };
   //khai báo để validation
   const nameJobRef = useRef(null);
   const discriptionJobRef = useRef(null);
@@ -261,7 +265,6 @@ export default function UserManagement() {
     });
   };
   const handleSubmitUpdateJob = async (event) => {
-    console.log(updateJob);
     event.preventDefault();
     let isValid = true;
     //validation nameJob trong update job
@@ -305,9 +308,12 @@ export default function UserManagement() {
         updateJob.danhGia,
         updateRateRef,
         "Vui lòng nhập Rate bằng chữ số!"
-      ) && validationCheckNumberRate(updateJob.danhGia,
+      ) &&
+      validationCheckNumberRate(
+        updateJob.danhGia,
         updateRateRef,
-        "Vui lòng nhập Rate từ 0 đến 10!");
+        "Vui lòng nhập Rate từ 0 đến 10!"
+      );
     //validation detail code trong update job
     isValid &=
       validationRequired(
@@ -331,21 +337,21 @@ export default function UserManagement() {
         updateJob.saoCongViec,
         updateStarRattingRef,
         "Vui lòng nhập star ratting bằng chữ số!"
-      ) && validationCheckNumberStarRatting(updateJob.saoCongViec,
+      ) &&
+      validationCheckNumberStarRatting(
+        updateJob.saoCongViec,
         updateStarRattingRef,
-        "Vui lòng nhập star ratting từ 1 đến 5!");
+        "Vui lòng nhập star ratting từ 1 đến 5!"
+      );
     if (isValid) {
       try {
+        console.log(updateJob);
         if (
           window.confirm(
-            `Bạn có chắc muốn thêm công việc ${updateJob.tenCongViec} này không?`
+            `Bạn có chắc cập nhật công việc ${updateJob.tenCongViec} này không?`
           )
         ) {
-          const response = await jobService.addNewJobApi(updateJob);
-          if (response && response.data.statusCode === 201) {
-            alert("Thêm công việc thành công!");
-            document.getElementById("closeUpdateJob").click();
-          }
+          await dispatch(updateJobAction({ ...updateJob }));
         }
       } catch (error) {
         console.error("Lỗi khi thêm công việc:", error);
@@ -354,39 +360,71 @@ export default function UserManagement() {
     }
   };
   //hàm upload hình ảnh
-  const [selectedImage, setSelectedImage] = useState(null);
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedImage(file);
+  const [imgSrc, setImgSrc] = useState(null);
+  const [imgSrcApi, setImgSrcApi] = useState(null);
+  const [imgFile, setImgFile] = useState(null);
+  const handleChangeFile = (e) => {
+    let file = e.target.files[0];
+    if (
+      file.type === "image/png" ||
+      file.type === "image/jpeg" ||
+      file.type === "image/gif" ||
+      file.type === "image/jpg"
+    ) {
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        setImgSrc(e.target.result); //base 64
+      };
+      setImgFile(file);
+    }
   };
   //hàm lấy id công việc khi nhấn nút Image
   const [currentJobId, setCurrentJobId] = useState(null);
-  const handleImageUpload = async () => {
-    try {
-      if (selectedImage && currentJobId) {
-        const formData = new FormData();
-        console.log(formData.get("hinhAnh"));
-        console.log(selectedImage);
-        formData.append("hinhAnh", selectedImage);
-        console.log(formData.get("hinhAnh"));
-        const response = await jobService.uploadImageApi(
-          currentJobId,
-          formData
-        );
-        if (response && response.data.statusCode === 200) {
-          // Handle the successful image upload
-          alert("Image uploaded successfully!");
-          document.getElementById("closeUploadImage").click(); // Close the modal after successful upload
-        } else {
-          // Handle the API response in case of an error
-          console.error("Error uploading image", response.data);
+  const AddImg = async () => {
+    if (imgFile) {
+      try {
+        console.log(updateJob);
+        if (
+          window.confirm(
+            `Bạn có chắc thêm hình ảnh cho công việc này không?`
+          )
+        ) {
+          const formData = new FormData();
+          formData.append("formFile", imgFile, imgFile.name);
+          const addImg = await jobService.uploadImageApi(
+            currentJobId,
+            formData
+          );
+          setImgSrcApi(addImg.data.content.hinhAnh);
+          notification.success({
+            message: "Thêm hình thành công",
+            placement: "bottomRight",
+            duration: 2,
+          });
+          document.getElementById("closeUploadImage").click();
         }
-      } else {
-        console.error("No image selected");
+      } catch (error) {
+        notification.warning({
+          message: "Không thể thêm hình",
+        });
       }
-    } catch (error) {
-      console.error("Error uploading image", error);
+      setImgFile(null);
+    } else {
+      notification.warning({
+        message: "Vui lòng chọn một hình ảnh trước khi upload",
+      });
     }
+  };
+  //hàm này reset thông tin hình ảnh trong form upload hình
+  const resetImageState = () => {
+    setImgSrc(null);
+    setImgSrcApi(null);
+    setImgFile(null);
+  };
+  const handleImageButtonClick = (jobId) => {
+    setCurrentJobId(jobId);
+    resetImageState(); 
   };
   //hàm phân trang 10 job 1 page
   const [currentPage, setCurrentPage] = useState(1);
@@ -418,7 +456,7 @@ export default function UserManagement() {
           </td>
           <td>{element.moTaNgan}</td>
           <td>{element.giaTien}</td>
-          <td>{element.saoCongViec}</td>
+          <td>{element.danhGia}</td>
           <td>
             <button
               className="btn btn-info mr-2 "
@@ -454,7 +492,7 @@ export default function UserManagement() {
               className="btn btn-warning"
               data-toggle="modal"
               data-target="#myModalUploadImage"
-              onClick={() => setCurrentJobId(element.id)}
+              onClick={() => handleImageButtonClick(element.id)}
             >
               IMAGE
             </button>
@@ -857,11 +895,11 @@ export default function UserManagement() {
                   type="file"
                   name="image"
                   className="form-control-file"
-                  onChange={handleFileChange}
+                  onChange={handleChangeFile}
                 />
               </div>
               <div className="text-right">
-                <button className="btn btn-success" onClick={handleImageUpload}>
+                <button className="btn btn-success" onClick={AddImg}>
                   Upload
                 </button>
               </div>

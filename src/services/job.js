@@ -66,13 +66,21 @@ class JobService {
     });
   }
   //uploadImage
-  uploadImageApi(id, formData) {
+  uploadImageApi(id, data) {
     return request({
       url: `/cong-viec/upload-hinh-cong-viec/${id}`,
       method: 'POST',
-      formFile: formData,
+       data,
     });
   }
+  //update Job
+  updateJob(id,data) {
+    return request({
+      url: `/cong-viec/${id}`,
+      method: "PUT",
+      data,
+    });
+  };
 }
 
 export const jobService = new JobService();

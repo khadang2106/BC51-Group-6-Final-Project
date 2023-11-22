@@ -37,6 +37,6 @@ export const updateJobTypeAction = (jobTypeData) => async (dispatch) => {
         console.error("Lỗi cập nhật loại công việc:", response.data);
       }
     } catch (error) {
-      console.error("Lỗi all api:", error);
+      console.error("Lỗi call api:", error);
     }
   };
