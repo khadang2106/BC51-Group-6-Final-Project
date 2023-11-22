@@ -23,5 +23,35 @@ class UserService {
       method: "DELETE",
     });
   };
+  //add new admin
+  addNewAdminApi (data){
+    return request({
+      url: "/users",
+      method: "POST",
+      data,
+    });
+  }
+  //getDetailUser
+  getUserDetailApi(id) {
+    return request({
+      url: `users/${id}`,
+      method: "GET",
+    });
+  };
+  //updateUser
+  updateUserApi(id,data) {
+    return request({
+      url: `/users/${id}`,
+      method: "PUT",
+      data,
+    });
+  };
+  //search tên người dùng
+  searchUserApi(TenNguoiDung) {
+    return request({
+      url: `/users/search/${TenNguoiDung}`,
+      method: "GET",
+    });
+  };
 }
 export const userService = new UserService();

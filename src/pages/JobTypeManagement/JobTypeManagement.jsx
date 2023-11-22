@@ -1,15 +1,136 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteUserAction } from "../../store/actions/userAction";
 import useJobTypeList from "../../hooks/useJobTypeList";
+import {
+  deleteJobTypeAction,
+  updateJobTypeAction,
+} from "../../store/actions/jobTypeAction";
+import { jobTypeService } from "../../services/jobType";
 
 export default function UserManagement() {
   const jobTypeList = useJobTypeList();
-  console.log(jobTypeList);
   const dispatch = useDispatch();
+  //hàm handlechange và handlesubmit add new jobtype
+  const [stateJobType, setStateJobType] = useState({
+    id: "",
+    tenLoaiCongViec: "",
+  });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setStateJobType({
+      ...stateJobType,
+      [name]: value,
+    });
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let isValid = true;
+    //validation email trong admin
+    isValid &= validationRequired(
+      stateJobType.tenLoaiCongViec,
+      tenLoaiCongViecRef,
+      "Tên loại công việc không được để trống!"
+    );
+    if (isValid) {
+      const dataAddJobType = { ...stateJobType, id: 0 };
+      try {
+        if (
+          window.confirm(
+            `Bạn có chắc muốn thêm loại công việc ${dataAddJobType.tenLoaiCongViec} này không?`
+          )
+        ) {
+          const response = await jobTypeService.addNewJobTypeApi(
+            dataAddJobType
+          );
+          if (response && response.data.statusCode === 200) {
+            alert("Thêm loại công việc thành công!");
+            document.getElementById("close1").click();
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm loại công việc:", error);
+        alert("Có lỗi xảy ra khi thêm loại công việc. Vui lòng thử lại.");
+      }
+    }
+  };
+  //validation check rỗng
+  const tenLoaiCongViecRef = useRef(null);
+  const updateTenLoaiCongViecRef = useRef(null);
+  const validationRequired = (value, ref, message) => {
+    if (value) {
+      ref.current.innerHTML = "";
+      return true;
+    }
+    ref.current.innerHTML = message;
+    return false;
+  };
+  //hàm này khi click vào  Edit lấy thông tin từ API show ra form
+  const handleEditClick = async (id) => {
+    try {
+      const getJobTypeDetail = await jobTypeService.getJobTypeDetailApi(id);
+      console.log(getJobTypeDetail);
+      if (getJobTypeDetail.data.statusCode === 200) {
+        setStateJobType(getJobTypeDetail.data.content);
+      } else {
+        console.error(
+          "Lỗi lấy thông tin chi tiết loại công việc:",
+          getJobTypeDetail.data
+        );
+      }
+    } catch (error) {
+      console.error("Lỗi lấy thông tin api", error);
+    }
+  };
+  //handlechange và handlesubmit update Jobtype
+  const handleChangeUpdateJobType = (event) => {
+    const { name, value } = event.target;
+    setStateJobType({
+      ...stateJobType,
+      [name]: value,
+    });
+  };
+  const handleSubmitUpdateJobType = async (event) => {
+    event.preventDefault();
+    let isValid = true;
+    //validation job type trong update
+    isValid &= validationRequired(
+      stateJobType.tenLoaiCongViec,
+      updateTenLoaiCongViecRef,
+      "Tên loại công việc không được để trống!"
+    );
+    if (isValid) {
+      try {
+        console.log(stateJobType);
+        if (
+          window.confirm(
+            `Bạn có chắc muốn cập nhật loại công việc ${stateJobType.tenLoaiCongViec} này không?`
+          )
+        ) {
+          await dispatch(updateJobTypeAction({ ...stateJobType }));
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm loại công việc:", error);
+        alert("Có lỗi xảy ra khi thêm loại công việc. Vui lòng thử lại.");
+      }
+    }
+  };
+  //hàm phân trang 10 job type 1 page
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobTypePerPage = 10;
+  const indexOfLastUser = currentPage * jobTypePerPage;
+  const indexOfFirstUser = indexOfLastUser - jobTypePerPage;
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(jobTypeList.length / jobTypePerPage); i++) {
+    pageNumbers.push(i);
+  }
+  const currentUsers = jobTypeList.slice(indexOfFirstUser, indexOfLastUser);
   //hàm rendercontent
   const renderContent = () => {
-    return jobTypeList.map((element, index) => {
+    return currentUsers.map((element, index) => {
+      console.log(element);
       return (
         <tr key={index}>
           <td>{element.id}</td>
@@ -19,6 +140,9 @@ export default function UserManagement() {
               className="btn btn-info mr-2 "
               data-toggle="modal"
               data-target="#myModal2"
+              onClick={() => {
+                handleEditClick(element.id);
+              }}
             >
               VIEW & EDIT
             </button>
@@ -26,14 +150,14 @@ export default function UserManagement() {
               onClick={async () => {
                 if (
                   window.confirm(
-                    `Bạn có chắc muốn xóa người dùng ${element.name} không?`
+                    `Bạn có chắc muốn xóa loại công việc ${element.tenLoaiCongViec} không?`
                   )
                 ) {
-                  const result = await dispatch(deleteUserAction(element));
+                  const result = await dispatch(deleteJobTypeAction(element));
                   if (result && result.success) {
-                    alert("Xóa người dùng thành công!");
+                    alert("Xóa loại công việc thành công!");
                   } else {
-                    alert("Có lỗi xảy ra khi xóa người dùng!");
+                    alert("Có lỗi xảy ra khi xóa loại công việc!");
                   }
                 }
               }}
@@ -110,6 +234,50 @@ export default function UserManagement() {
               <tbody>{renderContent()}</tbody>
             </table>
             {/**hiển thị next previous trong ul này */}
+            <ul className="pagination">
+                <li
+                  className={
+                    currentPage === 1 ? "page-item disabled" : "page-item"
+                  }
+                  onClick={() => {
+                    if (currentPage !== 1) {
+                      handlePageChange(currentPage - 1);
+                    }
+                  }}
+                >
+                  <span className="page-link">Previous</span>
+                </li>
+                {pageNumbers.map((number) => (
+                  <li
+                    key={number}
+                    className={
+                      currentPage === number ? "page-item active" : "page-item"
+                    }
+                    onClick={() => handlePageChange(number)}
+                  >
+                    <span className="page-link">{number}</span>
+                  </li>
+                ))}
+                <li
+                  className={
+                    currentPage ===
+                      Math.ceil(jobTypeList.length / jobTypePerPage) ||
+                    jobTypeList.length <= jobTypePerPage
+                      ? "page-item disabled"
+                      : "page-item"
+                  }
+                  onClick={() => {
+                    if (
+                      currentPage !==
+                      Math.ceil(jobTypeList.length / jobTypePerPage)
+                    ) {
+                      handlePageChange(currentPage + 1);
+                    }
+                  }}
+                >
+                  <span className="page-link">Next</span>
+                </li>
+              </ul>
           </div>
           <br />
         </div>
@@ -136,22 +304,27 @@ export default function UserManagement() {
             </div>
             {/* Modal body */}
             <div className="modal-body">
-              <form>
+              <form onSubmit={handleSubmit}>
                 {/* ID */}
                 <div className="form-group ">
                   <label className="font-weight-bold">ID</label>
                   <input
+                    onChange={handleChange}
                     name="id"
                     className="form-control"
+                    value={0}
+                    disabled="true"
                   />
                 </div>
                 {/* Job Type */}
                 <div className="form-group">
                   <label className="font-weight-bold">Job Type</label>
                   <input
-                    name="jobType"
+                    onChange={handleChange}
+                    name="tenLoaiCongViec"
                     className="form-control"
                   />
+                  <span ref={tenLoaiCongViecRef} className="text-danger"></span>
                 </div>
                 {/** Button Thêm */}
                 <div className="text-right">
@@ -185,22 +358,30 @@ export default function UserManagement() {
             </div>
             {/* Modal body */}
             <div className="modal-body">
-              <form>
+              <form onSubmit={handleSubmitUpdateJobType}>
                 {/* ID */}
                 <div className="form-group ">
                   <label className="font-weight-bold">ID</label>
                   <input
+                    value={stateJobType.id}
                     name="id"
                     className="form-control"
+                    disabled="true"
                   />
                 </div>
                 {/* Job Type */}
                 <div className="form-group">
                   <label className="font-weight-bold">Job Type</label>
                   <input
-                    name="jobType"
+                    value={stateJobType.tenLoaiCongViec}
+                    name="tenLoaiCongViec"
                     className="form-control"
+                    onChange={handleChangeUpdateJobType}
                   />
+                  <span
+                    ref={updateTenLoaiCongViecRef}
+                    className="text-danger"
+                  ></span>
                 </div>
                 {/** Button Thêm */}
                 <div className="text-right">

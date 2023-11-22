@@ -7,6 +7,7 @@ import { UserType } from '../enums/api';
 export default function AdminGuard(props) {
     const navigate = useNavigate();
     const userState = useSelector((state)=>state.userReducer);
+    console.log(userState);
     useEffect(()=>{
         //người dùng chưa đăng nhập
         if(!userState.userInfo){
