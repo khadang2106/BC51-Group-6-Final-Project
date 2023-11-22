@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import HomeLayout from '../layouts/HomeLayout/HomeLayout';
 import Home from '../pages/Home/Home';
 import PageNotFound from '../pages/PageNotFound/PageNotFound';
@@ -13,6 +13,12 @@ import NoAuthGuard from '../guards/NoAuthGuard';
 import Profile from '../pages/Profile/Profile';
 import AuthGuard from '../guards/AuthGuard';
 import Result from '../pages/Result/Result';
+import AdminLayout from '../layouts/AdminLayout/AdminLayout';
+import UserManagement from '../pages/UserManagement/UserManagement';
+import JobManagement from '../pages/JobManagement/JobManagement';
+import JobTypeManagement from '../pages/JobTypeManagement/JobTypeManagement';
+import ServiceManagement from '../pages/ServiceManagement/ServiceManagement';
+import AdminGuard from '../guards/AdminGuard';
 
 export default function Router() {
   const routing = useRoutes([
@@ -65,6 +71,36 @@ export default function Router() {
         {
           path: '/user/login',
           element: <Login />,
+        },
+      ],
+    },
+    {
+      path: '/admin',
+      element: (
+        <AdminGuard>
+          <AdminLayout />
+        </AdminGuard>
+      ),
+      children: [
+        {
+          path: '/admin',
+          element: <Navigate to="/admin/user-management" />,
+        },
+        {
+          path: '/admin/user-management',
+          element: <UserManagement />,
+        },
+        {
+          path: '/admin/job-management',
+          element: <JobManagement />,
+        },
+        {
+          path: '/admin/job-type-management',
+          element: <JobTypeManagement />,
+        },
+        {
+          path: '/admin/service-management',
+          element: <ServiceManagement />,
         },
       ],
     },

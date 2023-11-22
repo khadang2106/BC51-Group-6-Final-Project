@@ -22,3 +22,5 @@ export const userReducer = (state = DEFAULT_STATE, action) => {
   }
   return { ...state };
 };
+
+export const selectUserInfo = (state) => state.userInfo;

@@ -39,6 +39,43 @@ class UserService {
       data,
     });
   }
+
+  //đã dùng để lấy danh sách user
+  fetchUserList() {
+    return request({
+      url: '/users',
+      method: 'GET',
+    });
+  }
+  //đã dùng để xóa user
+  deleteUserApi(id) {
+    return request({
+      url: `/users?id=${id}`,
+      method: 'DELETE',
+    });
+  }
+  //add new admin
+  addNewAdminApi(data) {
+    return request({
+      url: '/users',
+      method: 'POST',
+      data,
+    });
+  }
+  //getDetailUser
+  getUserDetailApi(id) {
+    return request({
+      url: `users/${id}`,
+      method: 'GET',
+    });
+  }
+  //search tên người dùng
+  searchUserApi(TenNguoiDung) {
+    return request({
+      url: `/users/search/${TenNguoiDung}`,
+      method: 'GET',
+    });
+  }
 }
 
 export const userService = new UserService();
