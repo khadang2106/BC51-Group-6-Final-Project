@@ -1,0 +1,15 @@
+.profile {
+  .profile__wrapper {
+    margin: 0 auto;
+    padding: 20px 0 40px;
+    .profile__content {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 auto;
+      max-width: 1240px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+// Services
+.services {
+  margin: 70px 0;
+  h2 {
+    color: rgba(0, 0, 0, 0.85);
+    margin-bottom: 0.5em;
+  }
+  .services__slider {
+    .services__item {
+      padding: 10px;
+    }
+  }
+}

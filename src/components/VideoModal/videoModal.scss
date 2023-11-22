@@ -1,0 +1,24 @@
+.video-modal {
+  .modal-btn {
+    &::after {
+      content: '';
+      background: url(https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/desktop-play-button.bab1740.png)
+        no-repeat;
+      background-size: 80px;
+      display: inline-block;
+      height: 80px;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      z-index: 0;
+    }
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+.modal-show .modal-dialog {
+  max-width: 800px;
+}

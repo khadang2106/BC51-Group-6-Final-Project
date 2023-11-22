@@ -1,0 +1,17 @@
+.register__content {
+  display: flex;
+  align-items: center;
+  padding: 75px 0;
+  .right {
+    overflow: hidden;
+    width: 50%;
+    margin-bottom: 50px;
+    text-align: center;
+  }
+  .left {
+    width: 50%;
+    padding-left: 35px;
+    padding-right: 10px;
+    overflow: hidden;
+  }
+}
