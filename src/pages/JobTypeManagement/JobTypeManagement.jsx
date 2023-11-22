@@ -42,9 +42,9 @@ export default function UserManagement() {
           const response = await jobTypeService.addNewJobTypeApi(
             dataAddJobType
           );
-          if (response && response.data.statusCode === 200) {
+          if (response && response.data.statusCode === 201) {
             alert("Thêm loại công việc thành công!");
-            document.getElementById("close1").click();
+            document.getElementById("closeAddJobType").click();
           }
         }
       } catch (error) {
@@ -52,6 +52,22 @@ export default function UserManagement() {
         alert("Có lỗi xảy ra khi thêm loại công việc. Vui lòng thử lại.");
       }
     }
+  };
+  //reset form add job type
+  const resetModalState = () => {
+    setStateJobType({
+      tenLoaiCongViec: "", 
+    });
+    document.getElementById("tenLoaiCongViecInput").value = "";
+    tenLoaiCongViecRef.current.innerHTML = "";
+  };
+  //reset form update job type
+  const resetFormUpdateJobType = () => {
+    setStateJobType({
+      tenLoaiCongViec: "", 
+    });
+    document.getElementById("updateJobTypeInput").value = "";
+    updateTenLoaiCongViecRef.current.innerHTML = "";
   };
   //validation check rỗng
   const tenLoaiCongViecRef = useRef(null);
@@ -66,9 +82,9 @@ export default function UserManagement() {
   };
   //hàm này khi click vào  Edit lấy thông tin từ API show ra form
   const handleEditClick = async (id) => {
+    resetFormUpdateJobType();
     try {
       const getJobTypeDetail = await jobTypeService.getJobTypeDetailApi(id);
-      console.log(getJobTypeDetail);
       if (getJobTypeDetail.data.statusCode === 200) {
         setStateJobType(getJobTypeDetail.data.content);
       } else {
@@ -100,7 +116,6 @@ export default function UserManagement() {
     );
     if (isValid) {
       try {
-        console.log(stateJobType);
         if (
           window.confirm(
             `Bạn có chắc muốn cập nhật loại công việc ${stateJobType.tenLoaiCongViec} này không?`
@@ -130,7 +145,6 @@ export default function UserManagement() {
   //hàm rendercontent
   const renderContent = () => {
     return currentUsers.map((element, index) => {
-      console.log(element);
       return (
         <tr key={index}>
           <td>{element.id}</td>
@@ -213,6 +227,7 @@ export default function UserManagement() {
                 className="btn btn-success mr-auto"
                 data-toggle="modal"
                 data-target="#myModal"
+                onClick={resetModalState}
               >
                 <i className="fa fa-plus mr-1" /> ADD NEW JOB TYPE
               </button>
@@ -297,7 +312,7 @@ export default function UserManagement() {
                 type="button"
                 className="close"
                 data-dismiss="modal"
-                id="close"
+                id="closeAddJobType"
               >
                 ×
               </button>
@@ -323,6 +338,7 @@ export default function UserManagement() {
                     onChange={handleChange}
                     name="tenLoaiCongViec"
                     className="form-control"
+                    id="tenLoaiCongViecInput"
                   />
                   <span ref={tenLoaiCongViecRef} className="text-danger"></span>
                 </div>
@@ -351,7 +367,7 @@ export default function UserManagement() {
                 type="button"
                 className="close"
                 data-dismiss="modal"
-                id="close"
+                id="closeUpdateJobType"
               >
                 ×
               </button>
@@ -377,6 +393,7 @@ export default function UserManagement() {
                     name="tenLoaiCongViec"
                     className="form-control"
                     onChange={handleChangeUpdateJobType}
+                    id="updateJobTypeInput"
                   />
                   <span
                     ref={updateTenLoaiCongViecRef}

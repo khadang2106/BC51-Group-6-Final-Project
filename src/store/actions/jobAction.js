@@ -1,6 +1,7 @@
 
 import { jobService } from "../../services/job";
-import { DELETE_JOB } from "../types/userType";
+import { DELETE_JOB, UPDATE_JOB } from "../types/jobType";
+
 
 // nhấn nút delete job
 export const deleteJobAction = (job) => async (dispatch) => {
@@ -19,5 +20,24 @@ export const deleteJobAction = (job) => async (dispatch) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     return { success: false };
+  }
+};
+// update job
+export const updateJobAction = (job) => async (dispatch) => {
+  try {
+    const { id, ...updateJob } = job; 
+    const response = await jobService.updateJob(id,updateJob);
+    if (response.data.statusCode === 200) {
+      dispatch({
+        type: UPDATE_JOB,
+        payload: job,
+      });
+      alert("Cập nhật công việc thành công!");
+      document.getElementById("closeUpdateJob").click();
+    } else {
+      console.error("Lỗi cập nhật công việc:", response.data);
+    }
+  } catch (error) {
+    console.error("Lỗi call api:", error);
   }
 };

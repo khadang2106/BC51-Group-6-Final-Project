@@ -1,5 +1,6 @@
 import { jobTypeService } from "../../services/jobType";
-import { DELETE_JOBTYPE, UPDATE_JOBTYPE } from "../types/userType";
+import { DELETE_JOBTYPE, UPDATE_JOBTYPE } from "../types/jobTypeType";
+
 
 // nhấn nút delete job type
 export const deleteJobTypeAction = (jobType) => async (dispatch) => {
@@ -32,11 +33,11 @@ export const updateJobTypeAction = (jobTypeData) => async (dispatch) => {
           payload: jobTypeData,
         });
         alert("Cập nhật loại công việc thành công!");
-        document.getElementById("close2").click();
+        document.getElementById("closeUpdateJobType").click();
       } else {
         console.error("Lỗi cập nhật loại công việc:", response.data);
       }
     } catch (error) {
-      console.error("Lỗi all api:", error);
+      console.error("Lỗi call api:", error);
     }
   };

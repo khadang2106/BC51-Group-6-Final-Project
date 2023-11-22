@@ -1,5 +1,6 @@
 import { serviceService } from "../../services/service";
-import { DELETE_JOBSERVICE, UPDATE_JOBSERVICE } from "../types/userType";
+import { DELETE_JOBSERVICE, UPDATE_JOBSERVICE } from "../types/serviceType";
+
 
 // nhấn nút delete job service
 export const deleteJobServiceAction = (jobService) => async (dispatch) => {
@@ -32,7 +33,7 @@ export const updateJobServiceAction = (jobServiceData) => async (dispatch) => {
           payload: jobServiceData,
         });
         alert("Cập nhật thuê công việc thành công!");
-        document.getElementById("close2").click();
+        document.getElementById("closeUpdateJobService").click();
       } else {
         console.error("Lỗi cập nhật thuê công việc:", response.data);
       }

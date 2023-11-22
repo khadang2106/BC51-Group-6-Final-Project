@@ -6,9 +6,9 @@ import {
   updateUserAction,
 } from "../../store/actions/userAction";
 import { userService } from "../../services/user";
-
 export default function UserManagement() {
   const userList = useUserList();
+  console.log(userList);
   const dispatch = useDispatch();
   //useState cho add new Admin
   const [addAdmin, setAddAdmin] = useState({
@@ -111,7 +111,6 @@ export default function UserManagement() {
     resetFormUpdateUser();
     try {
       const getUserDetail = await userService.getUserDetailApi(id);
-      console.log(getUserDetail);
       if (getUserDetail.data.statusCode === 200) {
         setUpdateUser(getUserDetail.data.content);
       } else {
@@ -130,7 +129,6 @@ export default function UserManagement() {
     });
   };
   const handleSubmitUpdate = async (event) => {
-    console.log(updateUser);
     event.preventDefault();
     let isValid = true;
     //validation name trong update
@@ -179,20 +177,8 @@ export default function UserManagement() {
       validationRole(
         updateUser.role,
         roleRef,
-        "Loại người dùng chỉ có 2 loại ADMIN HOẶC USER!"
+        "Loại người dùng chỉ có ADMIN HOẶC USER! (viết hoa)"
       );
-    //validation certification trong update
-    isValid &= validationRequired(
-      updateUser.certification,
-      certificationRef,
-      "Vui lòng nhập chứng nhận - Nếu không có nhập 'Không'!"
-    );
-    //validation skill trong update
-    isValid &= validationRequired(
-      updateUser.skill,
-      skillRef,
-      "Vui lòng nhập kỹ năng - Nếu không có nhập 'Không'!"
-    );
     if (isValid) {
       try {
         //chuyển certification và skill từ chuỗi sang mảng theo yc của api
@@ -229,9 +215,6 @@ export default function UserManagement() {
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
-  console.log(searchValue);
-  console.log(hasSearched);
-  console.log(searchResults);
   const handleSearch = async () => {
     setHasSearched(true);
     if (!searchValue.trim()) {
@@ -240,7 +223,6 @@ export default function UserManagement() {
     }
     try {
       const result = await userService.searchUserApi(searchValue);
-      console.log(result);
       if (result.data.statusCode === 200) {
         setSearchResults(result.data.content);
       } else {
@@ -404,7 +386,7 @@ export default function UserManagement() {
       return (
         <tr>
           <td colSpan="8" style={{ textAlign: "center" }}>
-            Vui lòng nhập tên người dùng vào ô tìm kiếm.
+            Không tìm thấy người dùng!
           </td>
         </tr>
       );
