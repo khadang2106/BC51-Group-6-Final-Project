@@ -67,7 +67,6 @@ export default function UserManagement() {
     if (isValid) {
       try {
         const dataAddNewService = { ...stateJobSevice, id: 0 };
-        console.log(dataAddNewService);
         if (
           window.confirm(
             `Bạn có chắc muốn thêm thuê công việc ${dataAddNewService.maCongViec} này không?`
@@ -76,7 +75,6 @@ export default function UserManagement() {
           const response = await serviceService.addNewJobServiceApi(
             dataAddNewService
           );
-          console.log(response);
           if (response.data.statusCode === 201) {
             alert("Thêm thuê công việc thành công!");
             document.getElementById("closeAddNewService").click();
@@ -129,7 +127,6 @@ export default function UserManagement() {
       const getJobServiceDetail = await serviceService.getJobServiceDetailApi(
         id
       );
-      console.log(getJobServiceDetail);
       if (getJobServiceDetail.data.statusCode === 200) {
         setStateJobService(getJobServiceDetail.data.content);
       } else {
@@ -181,7 +178,6 @@ export default function UserManagement() {
     if (isValid) {
       try {
         const dataUpdateJobService = { ...stateJobSevice, id: 0 };
-        console.log(dataUpdateJobService);
         if (
           window.confirm(
             `Bạn có chắc muốn cập nhật thuê công việc ${dataUpdateJobService.maCongViec} này không?`
@@ -226,7 +222,6 @@ export default function UserManagement() {
   //hàm rendercontent
   const renderContent = () => {
     return currentUsers.map((element, index) => {
-      console.log(element);
       return (
         <tr key={index}>
           <td>{element.id}</td>

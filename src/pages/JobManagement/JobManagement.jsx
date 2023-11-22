@@ -40,7 +40,6 @@ export default function UserManagement() {
     });
   };
   const handleSubmit = async (event) => {
-    console.log(addJob);
     event.preventDefault();
     let isValid = true;
     //validation nameJob trong add new job
@@ -246,7 +245,6 @@ export default function UserManagement() {
     resetFormUpdateJob();
     try {
       const getJobDetail = await jobService.getJobDetailApi(id);
-      console.log(getJobDetail);
       if (getJobDetail.data.statusCode === 200) {
         setUpdateJob(getJobDetail.data.content);
       } else {
@@ -345,7 +343,6 @@ export default function UserManagement() {
       );
     if (isValid) {
       try {
-        console.log(updateJob);
         if (
           window.confirm(
             `Bạn có chắc cập nhật công việc ${updateJob.tenCongViec} này không?`
@@ -384,7 +381,6 @@ export default function UserManagement() {
   const AddImg = async () => {
     if (imgFile) {
       try {
-        console.log(updateJob);
         if (
           window.confirm(
             `Bạn có chắc thêm hình ảnh cho công việc này không?`
@@ -475,7 +471,6 @@ export default function UserManagement() {
                     `Bạn có chắc muốn xóa công việc ${element.tenCongViec} không?`
                   )
                 ) {
-                  console.log(element);
                   const result = await dispatch(deleteJobAction(element));
                   if (result && result.success) {
                     alert("Xóa người dùng thành công!");

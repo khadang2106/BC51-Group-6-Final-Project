@@ -6,9 +6,9 @@ import {
   updateUserAction,
 } from "../../store/actions/userAction";
 import { userService } from "../../services/user";
-
 export default function UserManagement() {
   const userList = useUserList();
+  console.log(userList);
   const dispatch = useDispatch();
   //useState cho add new Admin
   const [addAdmin, setAddAdmin] = useState({
@@ -111,7 +111,6 @@ export default function UserManagement() {
     resetFormUpdateUser();
     try {
       const getUserDetail = await userService.getUserDetailApi(id);
-      console.log(getUserDetail);
       if (getUserDetail.data.statusCode === 200) {
         setUpdateUser(getUserDetail.data.content);
       } else {
@@ -130,7 +129,6 @@ export default function UserManagement() {
     });
   };
   const handleSubmitUpdate = async (event) => {
-    console.log(updateUser);
     event.preventDefault();
     let isValid = true;
     //validation name trong update
@@ -217,9 +215,6 @@ export default function UserManagement() {
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
-  console.log(searchValue);
-  console.log(hasSearched);
-  console.log(searchResults);
   const handleSearch = async () => {
     setHasSearched(true);
     if (!searchValue.trim()) {
@@ -228,7 +223,6 @@ export default function UserManagement() {
     }
     try {
       const result = await userService.searchUserApi(searchValue);
-      console.log(result);
       if (result.data.statusCode === 200) {
         setSearchResults(result.data.content);
       } else {
