@@ -39,19 +39,39 @@ export default function Carousel() {
     <div className="carousel">
       <Slider {...carouselSettings}>
         <div className="carousel__item">
-          <img className="img-fluid" src="./img/1.png" alt="carouselSlider1" />
+          <img
+            className="d-block w-100 object-fit"
+            src="./img/1.png"
+            alt="carouselSlider1"
+          />
         </div>
         <div className="carousel__item">
-          <img className="img-fluid" src="./img/2.png" alt="carouselSlider2" />
+          <img
+            className="d-block w-100 object-fit"
+            src="./img/2.png"
+            alt="carouselSlider2"
+          />
         </div>
         <div className="carousel__item">
-          <img className="img-fluid" src="./img/3.png" alt="carouselSlider3" />
+          <img
+            className="d-block w-100 object-fit"
+            src="./img/3.png"
+            alt="carouselSlider3"
+          />
         </div>
         <div className="carousel__item">
-          <img className="img-fluid" src="./img/4.png" alt="carouselSlider4" />
+          <img
+            className="d-block w-100 object-fit"
+            src="./img/4.png"
+            alt="carouselSlider4"
+          />
         </div>
         <div className="carousel__item">
-          <img className="img-fluid" src="./img/5.png" alt="carouselSlider5" />
+          <img
+            className="d-block w-100 object-fit"
+            src="./img/5.png"
+            alt="carouselSlider5"
+          />
         </div>
       </Slider>
       <div className="container carousel__content">
