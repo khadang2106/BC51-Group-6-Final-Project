@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Pagination } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
 import { jobService } from '../../services/job';
 import './categoriesDetail.scss';
+import { LoadingContext } from '../../contexts/Loading/Loading';
 
 export default function CategoriesDetail() {
   const params = useParams();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [categoriesList, setCategoriesList] = useState([]);
+  const [_, setLoadingState] = useContext(LoadingContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -19,9 +21,13 @@ export default function CategoriesDetail() {
   }, [params.id]);
 
   const fetchCategoriesDetailById = async () => {
+    setLoadingState({ isLoading: true });
+
     const result = await jobService.fetchCategoriesDetailByIdApi(params.id);
 
     setCategoriesList(result.data.content);
+
+    setLoadingState({ isLoading: false });
   };
 
   const CARDS_PER_PAGE = 8;

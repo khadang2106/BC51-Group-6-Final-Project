@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { jobService } from '../../services/job';
 import { Pagination } from '@mui/material';
 import './result.scss';
+import { LoadingContext } from '../../contexts/Loading/Loading';
 
 export default function Result() {
   const params = useParams();
   const [jobList, setJobList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [_, setLoadingState] = useContext(LoadingContext);
 
   const fetchJobListByName = async () => {
-    const result = await jobService.fetchJobListByNameApi(params.keyword);
+    setLoadingState({ isLoading: true });
 
+    const result = await jobService.fetchJobListByNameApi(params.keyword);
     setJobList(result.data.content);
+
+    setLoadingState({ isLoading: false });
   };
 
   useEffect(() => {

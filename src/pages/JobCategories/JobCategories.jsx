@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import './jobCategories.scss';
 import { NavLink, useParams } from 'react-router-dom';
 import { jobService } from '../../services/job';
+import { LoadingContext } from '../../contexts/Loading/Loading';
 
 export default function JobCategories() {
   const params = useParams();
 
   const [jobCategories, setJobCategories] = useState([]);
+  const [_, setLoadingState] = useContext(LoadingContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -18,9 +20,12 @@ export default function JobCategories() {
   }, [params.id]);
 
   const fetchJobCategoriesById = async () => {
-    const result = await jobService.fetchJobCategoriesByIdApi(params.id);
+    setLoadingState({ isLoading: true });
 
+    const result = await jobService.fetchJobCategoriesByIdApi(params.id);
     setJobCategories(result.data.content);
+
+    setLoadingState({ isLoading: false });
   };
 
   const renderJobTitle = () => {
