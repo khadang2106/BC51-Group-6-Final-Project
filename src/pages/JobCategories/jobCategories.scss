@@ -163,3 +163,9 @@
     }
   }
 }
+
+@media screen and (max-width: 992px) {
+  .job-categories-explore .container .explore__content .explore__item img {
+    height: 125px;
+  }
+}
