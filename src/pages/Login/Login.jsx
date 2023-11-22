@@ -36,7 +36,7 @@ export default function Login() {
       notification.error({
         message: error.response.data.content,
         placement: 'top',
-        duration: 1.5,
+        duration: 2,
       });
     }
 

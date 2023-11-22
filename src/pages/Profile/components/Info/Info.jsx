@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { userService } from '../../../../services/user';
 import { Modal, notification } from 'antd';
@@ -7,10 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { reloadUserAction } from '../../../../store/actions/userAction';
 import './info.scss';
+import { LoadingContext } from '../../../../contexts/Loading/Loading';
 
 export default function Info() {
   const userState = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
+  const [_, setLoadingState] = useContext(LoadingContext);
 
   const [userInfo, setUserInfo] = useState({
     name: '',
@@ -21,19 +23,22 @@ export default function Info() {
     certification: [],
     skill: [],
   });
-  const [_, setAva] = useState();
+  const [ava, setAva] = useState();
 
   useEffect(() => {
     fetchUserById();
   }, [userState]);
 
   const fetchUserById = async () => {
+    setLoadingState({ isLoading: true });
+
     const result = await userService.fetchUserByIdApi(
       userState.userInfo.user.id
     );
-
     setUserInfo(result.data.content);
     setAva(result.data.content.avatar);
+
+    setLoadingState({ isLoading: false });
   };
 
   const uploadAvatar = async (event) => {
@@ -45,15 +50,19 @@ export default function Info() {
       formData.append('formFile', file);
 
       try {
-        await userService.uploadAvatarApi(formData);
-
-        fetchUserById();
+        await userService.uploadAvatarApi(formData).then((result) => {
+          dispatch(reloadUserAction(result.data.content));
+        });
 
         notification.success({
           message: 'Upload successfully!',
+          duration: 2,
         });
       } catch (error) {
-        console.error('Error while uploading image', error);
+        notification.error({
+          message: error.response.data.content,
+          duration: 2,
+        });
       }
     }
   };

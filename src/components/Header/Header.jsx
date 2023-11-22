@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { jobService } from '../../services/job';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserInfoAction } from '../../store/actions/userAction';
 import './header.scss';
+import { LoadingContext } from '../../contexts/Loading/Loading';
+import { Button, Drawer } from 'antd';
 
 export default function Header() {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.userReducer);
+  const [_, setLoadingState] = useContext(LoadingContext);
 
   const renderButton = () => {
     if (!userState.userInfo) {
@@ -37,7 +40,7 @@ export default function Header() {
               <img
                 className="user-avatar"
                 src={
-                  userState?.userInfo?.user.avatar
+                  userState?.userInfo?.user?.avatar
                     ? userState?.userInfo?.user.avatar
                     : 'https://static.thenounproject.com/png/363639-200.png'
                 }
@@ -112,9 +115,12 @@ export default function Header() {
   }, []);
 
   const fetchJobMenu = async () => {
-    const result = await jobService.fetchJobMenuApi();
+    setLoadingState({ isLoading: true });
 
+    const result = await jobService.fetchJobMenuApi();
     setJobList(result.data.content);
+
+    setLoadingState({ isLoading: false });
   };
 
   const renderJobMenu = () => {
@@ -165,6 +171,14 @@ export default function Header() {
     navigate(`/result/${keyword}`);
   };
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const showDrawer = () => {
+    setOpenDrawer(true);
+  };
+  const onCloseDrawer = () => {
+    setOpenDrawer(false);
+  };
+
   return (
     <>
       <header
@@ -172,48 +186,41 @@ export default function Header() {
         style={{ position: getStyle() }}
       >
         <div className="header__wrapper">
-          <div>
-            {/* <button
-              className="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#collapsibleNavbar"
-            >
-              <svg
-                stroke="currentColor"
-                fill="currentColor"
-                strokeWidth={0}
-                viewBox="0 0 448 512"
-                height="1em"
-                width="1em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z" />
-              </svg>
-            </button> */}
-            {/* Navbar links */}
-            {/* <div className="collapse navbar-collapse" id="collapsibleNavbar">
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Link
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Link
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Link
-                  </a>
-                </li>
-              </ul>
-            </div> */}
-          </div>
           <div className="row header__row">
             <div className="header__left">
+              <div className="header__collapse">
+                <Button onClick={showDrawer}>
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth={0}
+                    viewBox="0 0 448 512"
+                    height="1em"
+                    width="1em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z" />
+                  </svg>
+                </Button>
+                <Drawer
+                  title={
+                    <NavLink className="drawer-login-btn" to={'/user/login'}>
+                      Sign In
+                    </NavLink>
+                  }
+                  placement="left"
+                  onClose={onCloseDrawer}
+                  open={openDrawer}
+                >
+                  <div className="nav_item_ul d-flex flex-column">
+                    <p className="active">Fiverr Pro</p>
+                    <p>Explore</p>
+                    <p>Messages</p>
+                    <p>List</p>
+                    <p>Orders</p>
+                  </div>
+                </Drawer>
+              </div>
               <NavLink to={'/'} className="fiverr-logo mr-4">
                 <svg
                   width={89}

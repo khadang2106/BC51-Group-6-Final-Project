@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Breadcrumb, Rate, Collapse, Progress, Input } from 'antd';
 import { Pagination } from '@mui/material';
 import { commentService } from '../../../../services/comment';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import './jobInfo.scss';
+import { LoadingContext } from '../../../../contexts/Loading/Loading';
 
 const collapseText = `
   Voluptates amet earum velit nobis aliquam laboriosam nihil debitis facere voluptatibus consectetur quae quasi fuga, ad corrupti libero omnis sapiente non assumenda, incidunt officiis eaque iste minima autem.
@@ -30,6 +31,7 @@ export default function JobInfo(props) {
     congViec,
   } = jobDetail;
 
+  const [loadingState, setLoadingState] = useContext(LoadingContext);
   const userState = useSelector((state) => state.userReducer);
   const [comment, setComment] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -370,7 +372,7 @@ export default function JobInfo(props) {
                     <p>Seller communication level</p>
                     <div className="d-flex">
                       <span className="star">
-                        <i class="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star" />
                       </span>
                       <span className="star-score">3</span>
                     </div>
@@ -379,7 +381,7 @@ export default function JobInfo(props) {
                     <p>Recommend to a friend</p>
                     <div className="d-flex">
                       <span className="star">
-                        <i class="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star" />
                       </span>
                       <span className="star-score">3</span>
                     </div>
@@ -388,7 +390,7 @@ export default function JobInfo(props) {
                     <p>Service as described</p>
                     <div className="d-flex">
                       <span className="star">
-                        <i class="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star" />
                       </span>
                       <span className="star-score">3</span>
                     </div>
