@@ -1,0 +1,38 @@
+// GLOBAL
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: 'Montserrat', sans-serif;
+}
+.fiverr {
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    transition: all 0.3s;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 0.5em;
+  }
+  .slick-next,
+  .slick-prev {
+    &::before {
+      color: #b5b6ba;
+      font-size: 30px;
+    }
+    &:hover,
+    &:focus {
+      background: transparent;
+      color: transparent;
+      outline: none;
+    }
+  }
+}

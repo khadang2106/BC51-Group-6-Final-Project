@@ -8,15 +8,17 @@ const request = axios.create({
     TokenCybersoft: TOKEN_CYBERSOFT,
   },
 });
+
 request.interceptors.request.use((config) => {
   let accessToken = null;
   const state = store.getState();
-  console.log(state);
+
   if (state.userReducer.userInfo) {
     accessToken = state.userReducer.userInfo.token;
-    console.log(accessToken);
-    config.headers.Token  = accessToken;
+
+    config.headers.token = accessToken;
   }
   return config;
 });
+
 export { request };

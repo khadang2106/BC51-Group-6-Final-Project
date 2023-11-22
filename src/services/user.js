@@ -1,33 +1,64 @@
 import { request } from '../configs/api';
 
 class UserService {
-  //đã dùng
-  loginApi(data) {
+  fetchUserByIdApi(id) {
     return request({
-      url: `/auth/signin`,
+      url: `/users/${id}`,
+      method: 'GET',
+    });
+  }
+
+  updateUserApi(id, data) {
+    return request({
+      url: `/users/${id}`,
+      method: 'PUT',
+      data,
+    });
+  }
+
+  uploadAvatarApi(data) {
+    return request({
+      url: '/users/upload-avatar',
       method: 'POST',
       data,
     });
   }
-  //đã dùng để lấy danh sách user
-  fetchUserList(){
+
+  signInApi(data) {
     return request({
-      url: "/users",
-      method: "GET",
+      url: '/auth/signin',
+      method: 'POST',
+      data,
     });
-  };
+  }
+
+  signUpApi(data) {
+    return request({
+      url: '/auth/signup',
+      method: 'POST',
+      data,
+    });
+  }
+
+  //đã dùng để lấy danh sách user
+  fetchUserList() {
+    return request({
+      url: '/users',
+      method: 'GET',
+    });
+  }
   //đã dùng để xóa user
   deleteUserApi(id) {
     return request({
       url: `/users?id=${id}`,
-      method: "DELETE",
+      method: 'DELETE',
     });
-  };
+  }
   //add new admin
-  addNewAdminApi (data){
+  addNewAdminApi(data) {
     return request({
-      url: "/users",
-      method: "POST",
+      url: '/users',
+      method: 'POST',
       data,
     });
   }
@@ -35,23 +66,16 @@ class UserService {
   getUserDetailApi(id) {
     return request({
       url: `users/${id}`,
-      method: "GET",
+      method: 'GET',
     });
-  };
-  //updateUser
-  updateUserApi(id,data) {
-    return request({
-      url: `/users/${id}`,
-      method: "PUT",
-      data,
-    });
-  };
+  }
   //search tên người dùng
   searchUserApi(TenNguoiDung) {
     return request({
       url: `/users/search/${TenNguoiDung}`,
-      method: "GET",
+      method: 'GET',
     });
-  };
+  }
 }
+
 export const userService = new UserService();

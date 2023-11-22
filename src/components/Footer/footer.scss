@@ -1,0 +1,124 @@
+// Footer
+.footer {
+  border-top: 1px solid #e4e5e7;
+  padding: 64px 0 24px;
+  .footer__container {
+    margin: 0 auto;
+    max-width: 1400px;
+    padding: 0 32px;
+    .footer__top {
+      .item {
+        padding: 0 16px;
+        .article {
+          padding-bottom: 40px;
+          .title {
+            padding: 0 0 20px;
+            h6 {
+              color: #404145;
+              font-weight: 700;
+            }
+          }
+          .content {
+            ul li {
+              padding-bottom: 16px;
+              width: max-content;
+              a {
+                color: #74767e;
+                font-size: 14px;
+                p {
+                  color: #b5b6ba;
+                  width: max-content;
+                  margin-bottom: 1em;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .footer__bottom {
+      border-top: 1px solid #e4e5e7;
+      padding: 16px 0;
+      .left,
+      .right,
+      .settings {
+        display: flex;
+        align-items: center;
+      }
+      .left {
+        .copyright {
+          color: #b5b6ba;
+          font-size: 14px;
+          margin-left: 24px;
+          margin-bottom: 0;
+        }
+      }
+      .right {
+        .socials {
+          padding-right: 32px;
+          li {
+            margin-right: 24px;
+            i {
+              color: #74767e;
+              font-size: 18px;
+              padding: 2px;
+            }
+            a {
+              &:hover {
+                background-color: #d8d8db;
+                border-radius: 50%;
+                margin: -8px;
+                padding: 8px;
+                transition: background-color 0.2s;
+              }
+            }
+          }
+        }
+        .settings {
+          .languages,
+          .currencies {
+            margin-right: 4px;
+          }
+          .footer-btn {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            span {
+              color: #74767e;
+              font-size: 14px;
+              font-weight: 600;
+              padding-right: 8px;
+            }
+            &:hover {
+              background-color: #d8d8db;
+              border-radius: 54px;
+              color: #404145;
+              transition: background-color 0.2s;
+            }
+            &:focus {
+              outline: none;
+            }
+          }
+          .users {
+            .users-footer-btn {
+              background: #fff;
+              border: 1px solid #74767e;
+              border-radius: 50%;
+              color: #7e7e7e;
+              height: 32px;
+              width: 32px;
+              &:hover {
+                background-color: #d8d8db;
+                border: none;
+                color: #404145;
+              }
+              &:focus {
+                outline: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

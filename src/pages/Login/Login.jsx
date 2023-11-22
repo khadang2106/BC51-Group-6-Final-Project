@@ -1,67 +1,114 @@
-import React, { useState } from 'react';
-import { userService } from '../../services/user';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { NavLink, useNavigate } from 'react-router-dom';
+
+import './login.scss';
 import { useDispatch } from 'react-redux';
+import { userService } from '../../services/user';
 import { setUserInfoAction } from '../../store/actions/userAction';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { notification } from 'antd';
 
 export default function Login() {
   const navigate = useNavigate();
-  //hàm dispatch lên store
   const dispatch = useDispatch();
-  //chỗ này useState để lấy thông tin trên form đăng nhập
-  const [state, setState] = useState({
-    email: '',
-    password: '',
-  });
-  const handleChange = (event) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.value,
-    });
-  };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    // console.log(state);
-    const result = await userService.loginApi(state);
-    //trước khi dispatch thì lưu local để tránh trường hợp khi f5 lại thì data store mất hết
-    //chỗ lưu thì lưu file ở dạng chuỗi stringify
-    localStorage.setItem('USER_INFO', JSON.stringify(result.data.content));
-    dispatch(setUserInfoAction(result.data.content));
 
-    Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Login successfully!',
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    //sau khi login thành công thì chuyển về trang home
-    navigate('/');
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().required('(*) Email cannot be blank!'),
+    password: Yup.string().required('(*) Password cannot be blank!'),
+  });
+
+  const handleLoginSubmit = async (values, { resetForm }) => {
+    try {
+      const result = await userService.signInApi(values);
+
+      dispatch(setUserInfoAction(result.data.content));
+      localStorage.setItem('USER_INFO', JSON.stringify(result.data.content));
+
+      notification.success({
+        message: 'Login successfully!',
+        placement: 'topLeft',
+        duration: 2,
+      });
+
+      navigate('/');
+    } catch (error) {
+      notification.error({
+        message: error.response.data.content,
+        placement: 'top',
+        duration: 1.5,
+      });
+    }
+
+    resetForm();
   };
+
   return (
-    <div className="w-25 mx-auto py-5 text-white">
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="">Email</label>
-          <input
-            onChange={handleChange}
-            name="email"
-            type="text"
-            className="form-control"
+    <div className="login__content">
+      <div className="login__left">
+        <div>
+          <img
+            className="img-fluid"
+            src="../img/signin.6f1c72291c1ec0817ded.jpg"
+            alt="login"
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="">Password</label>
-          <input
-            onChange={handleChange}
-            name="password"
-            type="password"
-            className="form-control"
-          />
+      </div>
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleLoginSubmit}
+      >
+        <div className="login__right text-center">
+          <h2>Sign In To Fiverr</h2>
+          <Form className="login-form">
+            <div className="fiverr-form-control">
+              <i className="fa-solid fa-user" />
+              <Field
+                className="form-control"
+                name="email"
+                type="text"
+                placeholder="Your Email"
+              />
+            </div>
+            <div className="error-login w-100 mt-1">
+              <ErrorMessage
+                name="email"
+                component="label"
+                className="error-message text-danger"
+              />
+            </div>
+            <div className="fiverr-form-control mt-3">
+              <i className="fa-solid fa-lock" />
+              <Field
+                className="form-control"
+                name="password"
+                type="password"
+                placeholder="Your Password"
+              />
+            </div>
+            <div className="error-login w-100 mt-1">
+              <ErrorMessage
+                name="password"
+                component="label"
+                className="error-message text-danger"
+              />
+            </div>
+            <div className="action-zone mt-4">
+              <button className="btn action-btn" type="submit">
+                Login
+              </button>
+              <span>
+                Don't have an account? {''}
+                <NavLink to={'/user/register'}>Join here</NavLink>
+              </span>
+            </div>
+          </Form>
         </div>
-        <button className="btn btn-primary">LOGIN</button>
-      </form>
+      </Formik>
     </div>
   );
 }
