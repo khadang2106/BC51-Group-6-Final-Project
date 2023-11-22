@@ -3,6 +3,7 @@ export const RELOAD_USER = 'RELOAD_USER';
 export const DELETE_USER = 'DELETE_USER';
 export const UPDATE_USER = 'UPDATE_USER';
 export const DELETE_JOB = 'DELETE_JOB';
+export const UPDATE_JOB = 'UPDATE_JOB';
 export const DELETE_JOBTYPE = 'DELETE_JOBTYPE';
 export const UPDATE_JOBTYPE = 'UPDATE_JOBTYPE';
 export const DELETE_JOBSERVICE = 'DELETE_JOBSERVICE';
