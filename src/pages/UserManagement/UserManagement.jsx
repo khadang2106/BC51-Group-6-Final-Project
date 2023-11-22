@@ -8,7 +8,6 @@ import {
 import { userService } from "../../services/user";
 export default function UserManagement() {
   const userList = useUserList();
-  console.log(userList);
   const dispatch = useDispatch();
   //useState cho add new Admin
   const [addAdmin, setAddAdmin] = useState({
